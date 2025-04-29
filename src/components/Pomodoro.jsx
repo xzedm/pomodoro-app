@@ -1,9 +1,18 @@
 import React, { useEffect, useState } from 'react'
 
-const defaultTime = 1500;
+const getInitialTime = (mode) => {
+    return mode === 'work' ? 25 * 60 : 5 * 60;
+  };
+
 export default function Pomodoro() {
-const [timeLeft, setTimeLeft] = useState(defaultTime);
+const [timeLeft, setTimeLeft] = useState(getInitialTime('work'));
 const [isRunning, setIsRunning] = useState(false);
+const [mode, setMode] = useState('work'); // 'work' or 'break'
+
+function playAlarm() {
+    const sound = new Audio("/alarm.mp3");
+    sound.play();
+}
 
 useEffect(() => {
     let timer = null;
@@ -16,6 +25,24 @@ useEffect(() => {
 
     return () => clearInterval(timer);
 }, [isRunning, timeLeft]);
+
+
+useEffect(() => {
+    if (timeLeft === 0) {
+      if (mode === 'work') {
+        setMode('break');
+        setTimeLeft(getInitialTime('break'));
+        playAlarm();
+      } else {
+        setMode('work');
+        setTimeLeft(getInitialTime('work'));
+        playAlarm();
+      }
+  
+      setIsRunning(true);
+    }
+  }, [timeLeft, mode]);
+  
 
 const formatTime = (seconds) => {
     const min = Math.floor(seconds / 60);
@@ -30,12 +57,13 @@ const stopTimer = () => {
 
 const resetTimer = () => {
     setIsRunning(false);
-    setTimeLeft(defaultTime);
+    setTimeLeft(getInitialTime('work'));
 }
 
   return (
     <div>
       <h1 className='title'>Pomodoro Timer</h1>
+      <h2 className='mode-title'>{mode === 'work' ? 'Focus Time' : 'Break Time'}</h2>
       <div className='time'>{formatTime(timeLeft)}</div>
       <div className='buttons'>
         <button className='pause' onClick={stopTimer}>
