@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from 'react'
+import { motion } from 'motion/react'
 
 const getInitialTime = (mode) => {
     return mode === 'work' ? 25 * 60 : 5 * 60;
@@ -66,12 +67,12 @@ const resetTimer = () => {
       <h2 className='mode-title'>{mode === 'work' ? 'Focus Time' : 'Break Time'}</h2>
       <div className='time'>{formatTime(timeLeft)}</div>
       <div className='buttons'>
-        <button className='pause' onClick={stopTimer}>
+        <motion.button whileTap={{ scale: 0.85 }} className='pause' onClick={stopTimer}>
             {isRunning ? 'Pause' : 'Start'}
-        </button>
-        <button className='reset' onClick={resetTimer}>
+        </motion.button>
+        <motion.button whileTap={{ scale: 0.85 }} className='reset' onClick={resetTimer}>
             Reset
-        </button>
+        </motion.button>
       </div>
     </div>
   )
